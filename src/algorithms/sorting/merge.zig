@@ -2,8 +2,9 @@ const std = @import("std");
 
 pub fn mergeSort(arr: []i32, temp: []i32, left: usize, right: usize) void {
     if (left >= right) {
-        return; // Base case: the sub-array is empty or a single element
+        return;
     }
+
     const mid = (left + right) / 2;
     mergeSort(arr, temp, left, mid);
     mergeSort(arr, temp, mid + 1, right);
@@ -11,9 +12,9 @@ pub fn mergeSort(arr: []i32, temp: []i32, left: usize, right: usize) void {
 }
 
 fn merge(arr: []i32, temp: []i32, left: usize, mid: usize, right: usize) void {
-    var i = left;
-    var j = mid + 1;
-    var k = left;
+    var i: usize = left;
+    var j: usize = mid + 1;
+    var k: usize = left;
 
     while (i <= mid and j <= right) {
         if (arr[i] <= arr[j]) {
@@ -38,8 +39,8 @@ fn merge(arr: []i32, temp: []i32, left: usize, mid: usize, right: usize) void {
         k += 1;
     }
 
-    for (temp[left .. right + 1]) |item, index| {
-        arr[left + index] = item;
+    for (temp[left .. right + 1]) |value, idx| {
+        arr[left + idx] = value;
     }
 }
 
