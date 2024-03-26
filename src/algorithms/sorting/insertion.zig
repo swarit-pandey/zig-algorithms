@@ -1,7 +1,7 @@
 const std = @import("std");
 
 pub fn insertionSort(arr: []i32) void {
-    for (arr[1..]) |value, i| {
+    for (arr[1..], 0..) |value, i| {
         var j: usize = i;
         while (j >= 0 and arr[j] > value) {
             arr[j + 1] = arr[j];

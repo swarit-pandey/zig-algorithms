@@ -1,56 +1,57 @@
 const std = @import("std");
 
-pub fn PriorityQueue(comptime T: type) type {
+pub fn PriorityQueue(comptime T: type, comptime comparator: fn (a: T, b: T) bool) type {
     return struct {
         heap: std.ArrayList(T),
-        comparator: fn (a: T, b: T) bool,
 
-        pub fn init(allocator: std.mem.Allocator, comparator: fn (a: T, b: T) bool) !PriorityQueue(T) {
-            return PriorityQueue(T){
-                .heap = std.ArrayList(T).init(allocator), // Corrected from .bool to .heap
-                .comparator = comparator,
+        pub fn init(allocator: std.mem.Allocator) !PriorityQueue(T, comparator) {
+            return PriorityQueue(T, comparator){
+                .heap = std.ArrayList(T).init(allocator),
             };
         }
 
-        pub fn deinit(self: *PriorityQueue(T)) void {
-            self.heap.deinit(); // Call deinit on the ArrayList to free memory
+        pub fn deinit(self: *PriorityQueue(T, comparator)) void {
+            self.heap.deinit();
         }
 
-        pub fn enqueue(self: *PriorityQueue(T), item: T) !void {
+        pub fn enqueue(self: *PriorityQueue(T, comparator), item: T) !void {
             try self.heap.append(item);
-            var i = self.heap.len - 1;
-            while (i > 0) {
-                const parent = (i - 1) / 2;
-                if (self.comparator(self.heap.items[parent], self.heap.items[i])) break;
-                std.mem.swap(T, &self.heap.items[i], &self.heap.items[parent]);
-                i = parent;
+            var i = self.heap.items.len - 1;
+            while (i > 0 and comparator(self.heap.items[(i - 1) / 2], self.heap.items[i])) {
+                std.mem.swap(T, &self.heap.items[i], &self.heap.items[(i - 1) / 2]);
+                i = (i - 1) / 2;
             }
         }
 
-        pub fn dequeue(self: *PriorityQueue(T)) ?T {
-            if (self.heap.capacity == 0) return null;
-            std.mem.swap(T, &self.heap.items[0], &self.heap.items[self.heap.capacity - 1]);
+        pub fn dequeue(self: *PriorityQueue(T, comparator)) ?T {
+            if (self.heap.items.len == 0) return null;
+            std.mem.swap(T, &self.heap.items[0], &self.heap.items[self.heap.items.len - 1]);
             const result = self.heap.pop();
-
             var i: usize = 0;
             while (true) {
                 const left = 2 * i + 1;
                 const right = 2 * i + 2;
                 var largest = i;
-                if (left < self.heap.capacity and self.comparator(self.heap.items[largest], self.heap.items[left])) {
+                if (left < self.heap.items.len and comparator(self.heap.items[largest], self.heap.items[left])) {
                     largest = left;
                 }
-
-                if (right < self.heap.capacity and self.comparator(self.heap.items[largest], self.heap.items[right])) {
+                if (right < self.heap.items.len and comparator(self.heap.items[largest], self.heap.items[right])) {
                     largest = right;
                 }
-
                 if (largest == i) break;
                 std.mem.swap(T, &self.heap.items[i], &self.heap.items[largest]);
                 i = largest;
             }
-
             return result;
+        }
+
+        pub fn peek(self: *PriorityQueue(T, comparator)) ?T {
+            if (self.heap.items.len == 0) return null;
+            return self.heap.items[0];
+        }
+
+        pub fn clear(self: *PriorityQueue(T, comparator)) void {
+            self.heap.clearRetainingCapacity();
         }
     };
 }
@@ -61,7 +62,7 @@ fn intComparator(a: i32, b: i32) bool {
 
 test "PriorityQueue enqueue and dequeue" {
     const allocator = std.heap.page_allocator;
-    var pq = try PriorityQueue(i32).init(allocator, intComparator);
+    var pq = try PriorityQueue(i32, intComparator).init(allocator);
     defer pq.deinit();
 
     try pq.enqueue(10);

@@ -2,6 +2,9 @@ const std = @import("std");
 
 pub fn heapSort(arr: []i32) void {
     var n = arr.len;
+    if (n <= 1) {
+        return;
+    }
 
     var i = n / 2 - 1;
     while (i >= 0) : (i -= 1) {
@@ -33,4 +36,22 @@ fn heapify(arr: []i32, heapSize: usize, rootIndex: usize) void {
         std.mem.swap(i32, &arr[rootIndex], &arr[largest]);
         heapify(arr, heapSize, largest);
     }
+}
+
+test "heapSort with a single element array" {
+    var arr: [1]i32 = [_]i32{42};
+    heapSort(arr[0..]);
+    try std.testing.expectEqualSlices(i32, &[_]i32{42}, arr[0..]);
+}
+
+test "heapSort with a multi-element array" {
+    var arr: [6]i32 = [_]i32{ 3, 1, 4, 1, 5, 9 };
+    heapSort(arr[0..]);
+    try std.testing.expectEqualSlices(i32, &[_]i32{ 1, 1, 3, 4, 5, 9 }, arr[0..]);
+}
+
+test "heapSort with a reverse sorted array" {
+    var arr: [5]i32 = [_]i32{ 5, 4, 3, 2, 1 };
+    heapSort(arr[0..]);
+    try std.testing.expectEqualSlices(i32, &[_]i32{ 1, 2, 3, 4, 5 }, arr[0..]);
 }

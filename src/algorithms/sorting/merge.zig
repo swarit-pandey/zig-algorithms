@@ -39,7 +39,7 @@ fn merge(arr: []i32, temp: []i32, left: usize, mid: usize, right: usize) void {
         k += 1;
     }
 
-    for (temp[left .. right + 1]) |value, idx| {
+    for (temp[left .. right + 1], 0..) |value, idx| {
         arr[left + idx] = value;
     }
 }
