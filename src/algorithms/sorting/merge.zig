@@ -45,7 +45,7 @@ fn merge(arr: []i32, temp: []i32, left: usize, mid: usize, right: usize) void {
 }
 
 test "mergeSort with an empty array" {
-    var arr: []i32 = &[_]i32{};
+    const arr: []i32 = &[_]i32{};
     var temp: [0]i32 = undefined;
     if (arr.len > 0) {
         mergeSort(arr, temp[0..], 0, arr.len - 1);

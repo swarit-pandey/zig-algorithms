@@ -1,7 +1,7 @@
 const std = @import("std");
 
 pub fn heapSort(arr: []i32) void {
-    var n = arr.len;
+    const n = arr.len;
     if (n <= 1) {
         return;
     }
@@ -21,8 +21,8 @@ pub fn heapSort(arr: []i32) void {
 
 fn heapify(arr: []i32, heapSize: usize, rootIndex: usize) void {
     var largest = rootIndex;
-    var left = 2 * rootIndex + 1; // left = 2*i + 1
-    var right = 2 * rootIndex + 2; // right = 2*i + 2
+    const left = 2 * rootIndex + 1; // left = 2*i + 1
+    const right = 2 * rootIndex + 2; // right = 2*i + 2
 
     if (left < heapSize and arr[left] > arr[largest]) {
         largest = left;
