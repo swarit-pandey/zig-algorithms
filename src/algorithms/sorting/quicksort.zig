@@ -16,19 +16,19 @@ pub fn partition(arr: []i32, p: usize, r: usize) usize {
     return i;
 }
 
-pub fn quickSort(arr: []i32, p: usize, r: usize) void {
+pub fn quicksort(arr: []i32, p: usize, r: usize) void {
     if (p < r) {
         const q = partition(arr, p, r);
 
         if (q > 0) {
-            quickSort(arr, p, q - 1);
+            quicksort(arr, p, q - 1);
         }
-        quickSort(arr, q + 1, r);
+        quicksort(arr, q + 1, r);
     }
 }
 
 test "quick sort" {
     var arr = [_]i32{ 5, 2, 4, 6, 1, 3 };
-    quickSort(&arr, 0, arr.len - 1);
+    quicksort(&arr, 0, arr.len - 1);
     try testing.expectEqual([_]i32{ 1, 2, 3, 4, 5, 6 }, arr);
 }
